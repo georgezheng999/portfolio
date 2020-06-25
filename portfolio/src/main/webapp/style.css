@@ -1,4 +1,6 @@
-
+body {
+  background-color: Gainsboro;
+}
 
 #content {
   font-family: "Times New Roman", cursive, sans-serif;
@@ -6,8 +8,4 @@
   margin-right: auto;
   width: 650px;
   text-align: center;
-}
-
-#greeting-container {
-  margin-top: 20px;
 }
