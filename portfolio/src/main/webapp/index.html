@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>George's Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
   </head>
   <body>
     <div id="name">
@@ -16,39 +17,44 @@
     </div>
     <div id="background">
       <p> I have worked on a variety of projects spanning several academic disciplines (check out some selected works featured below!). In my free time, I enjoy playing video games (most recently, League of Legends and Realm of the Mad God), watching anime, and napping. 
+      <form>
+        <input type="button" value="Select a project!" onClick="chooseFeaturedProj()">
+      </form>
     </div>
-    <div class="row">
-      <div class="column">
-        <img src="images/cmpbio.jpeg" alt="genes" style="width:100%">
-        <h3><a href="https://github.com/georgezheng999/Depmap-Data-Scraping">Computational Biology</a></h3>
-        <p>Work done at the Whitehead Institute of Biomedical research. Wrote scripts to automate the extraction and parsing of large online databases of CRISPR data. Utilized bioinformatics and applied various algorithmic approaches to screen large genomic datasets. Analyzed graph models of genes involved in kinetochore mobilization to reveal novel relationships.
+    <div id="content">
+      <div class="row">
+        <div class="column">
+          <img src="images/cmpbio.jpeg" alt="genes" style="width:100%">
+          <h2><a href="https://github.com/georgezheng999/Depmap-Data-Scraping">Computational Biology</a></h2>
+          <p>Work done at the Whitehead Institute of Biomedical research. Wrote scripts to automate the extraction and parsing of large online databases of CRISPR data. Utilized bioinformatics and applied various algorithmic approaches to screen large genomic datasets. Analyzed graph models of genes involved in kinetochore mobilization to reveal novel relationships.
+        </div>
+        <div class="column">
+          <img src="images/polsci.jpeg" alt="usa" style="width:100%">
+          <h2><a href="https://github.mit.edu/MEDSL/primary-precincts">Political Science</a></h2>
+          <p>Work done with the MIT Election Data and Science Lab. Developed research dataset of collected primary election data converted into a common database format.  
+        </div>
+        <div class="column">
+          <img src="images/pman.jpeg" alt="pacman" style="width:100%">
+          <h2><a href="https://github.com/georgezheng999/Pac-Man">Pac-Man</a></h2>
+          <p>Classical game of Pac-Man.
+        </div>
       </div>
-      <div class="column">
-        <img src="images/polsci.jpeg" alt="usa" style="width:100%">
-        <h3><a href="https://github.mit.edu/MEDSL/primary-precincts">Political Science</a></h3>
-        <p>Work done with the MIT Election Data and Science Lab. Developed research dataset of collected primary election data converted into a common database format.  
-      </div>
-      <div class="column">
-        <img src="images/pman.jpeg" alt="pacman" style="width:100%">
-        <h3><a href="https://github.com/georgezheng999/Pac-Man">Pac-Man</a></h3>
-        <p>Classical game of Pac-Man.
-      </div>
-    </div>
-    <div class="row">
-      <div class="column">
-        <img src="images/port.jpeg" alt="port" style="width:100%">
-        <h3><a href="">Portfolio</a></h3>
-        <p>A portfolio website.
-      </div>
-      <div class="column">
-        <img src="images/chess.jpeg" alt="chess" style="width:100%">
-        <h3><a href="https://github.com/georgezheng999/Chess-Two-Player">Chess</a></h3>
-        <p>Classical game of chess. 
-      </div>
-      <div class="column">
-        <img src="images/ds.png" alt="ds" style="width:100%">
-        <h3><a href="https://github.com/georgezheng999/APCS-Spring-Projects">Data Structures</a></h3>
-        <p>A collection of assorted data structures written in Java.
+      <div class="row">
+        <div class="column">
+          <img src="images/port.jpeg" alt="port" style="width:100%">
+          <h2><a href="">Portfolio</a></h2>
+          <p>A portfolio website.
+        </div>
+        <div class="column">
+          <img src="images/chess.jpeg" alt="chess" style="width:100%">
+          <h2><a href="https://github.com/georgezheng999/Chess-Two-Player">Chess</a></h2>
+          <p>Classical game of chess. 
+        </div>
+        <div class="column">
+          <img src="images/ds.png" alt="ds" style="width:100%">
+          <h2><a href="https://github.com/georgezheng999/APCS-Spring-Projects">Data Structures</a></h2>
+          <p>A collection of assorted data structures written in Java.
+        </div>
       </div>
     </div>
   </body>
