@@ -11,12 +11,12 @@ import java.util.List;
 public class Comments {
 
   /** List of comments */
-  private final List<String> comments = new ArrayList<>();
+  private final List<String> history = new ArrayList<>();
 
 
   /** Adds the player's turn */
   public void addComment(String comment) {
-    comments.add(comment);
+    history.add(comment);
   }
 
 }

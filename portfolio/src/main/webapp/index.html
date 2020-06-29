@@ -6,12 +6,18 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getMsg()">
+  <body onload="getComments()">
     <div id="name">
       <h1>George Zheng</h1>
     </div>
     <hr>
-    <div id="message-container"></div>
+    <ul id="comments-history"></ul>
+    <form action="/comments" method="POST">
+      <p>Add a new comment:</p>
+      <input type="text" name="comment" value="">
+      <br/><br/>
+      <input type="submit" />
+    </form>
     <div id="background">
       <p>Hi there! I'm George Zheng, and this is my portfolio website you're currently on.
       <p>I was born on October 25th, 2000 in the borough of Manhattan in New York City. I grew up in that same city, attending Stuyvesant High School until recently. Currently, I am a rising junior at the Massachusetts Institute of Technology, pursuing a degree in Computer Science and Engineering. 
