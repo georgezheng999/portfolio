@@ -1,4 +1,15 @@
 /**
+ * Fetches a message from the server and adds it to the DOM.
+ */
+async function getMsg() {
+  const response = await fetch('/data');
+  const quote = await response.text();
+  document.getElementById('message-container').innerText = quote;
+}
+
+
+
+/**
  * Leads user to a selected project.
  */
 function chooseFeaturedProj() {
