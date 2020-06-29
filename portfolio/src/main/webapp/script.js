@@ -13,10 +13,22 @@ async function getMsg() {
  * Leads user to a selected project.
  */
 function chooseFeaturedProj() {
-  const urls =
-      ['https://github.com/georgezheng999/Depmap-Data-Scraping', 'https://github.mit.edu/MEDSL/primary-precincts', 'https://github.com/georgezheng999/Pac-Man', '', 'https://github.com/georgezheng999/Chess-Two-Player', 'https://github.com/georgezheng999/APCS-Spring-Projects'];
-  const images = 
-      ['images/cmpbio.jpeg', 'images/polsci.jpeg', 'images/pman.jpeg', 'images/port.jpeg', 'images/chess.jpeg', 'images/ds.png'] 
+  const urls = [
+      'https://github.com/georgezheng999/Depmap-Data-Scraping', 
+      'https://github.mit.edu/MEDSL/primary-precincts', 
+      'https://github.com/georgezheng999/Pac-Man', 
+      '', //empty string corresponding to portfolio entry, to effectively refresh the page.
+      'https://github.com/georgezheng999/Chess-Two-Player', 
+      'https://github.com/georgezheng999/APCS-Spring-Projects'
+    ];
+  const images = [
+    'images/cmpbio.jpeg', 
+    'images/polsci.jpeg', 
+    'images/pman.jpeg', 
+    'images/port.jpeg', 
+    'images/chess.jpeg', 
+    'images/ds.png'
+    ]; 
   const index = Math.floor(Math.random() * urls.length);
   const url = urls[index];
   const image = images[index];
