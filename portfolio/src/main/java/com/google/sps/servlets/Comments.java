@@ -14,7 +14,7 @@ public class Comments {
   private final List<String> history = new ArrayList<>();
 
 
-  /** Adds the player's turn */
+  /** Adds a given comment */
   public void addComment(String comment) {
     history.add(comment);
   }
