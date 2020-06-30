@@ -17,9 +17,6 @@ function createListElement(text) {
   return liElement;
 }
 
-
-
-
 /**
  * Leads user to a selected project.
  */
