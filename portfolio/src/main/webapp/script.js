@@ -25,7 +25,7 @@ async function deleteComments() {
   const historyEl = document.getElementById('comments-history');
   historyEl.innerHTML = ''; //clears the table of displayed previous comments
   const request = new Request('/delete-comments', {method: 'POST', body: '{}'});
-  fetch(request).then(response => {return response.json();})
+  fetch(request).then(response => {})
 }
 
 /**
