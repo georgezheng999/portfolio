@@ -19,6 +19,15 @@ function createListElement(comment) {
 }
 
 /**
+ * Deletes comments from the server.
+ */
+async function deleteComments() {
+  const historyEl = document.getElementById('comments-history');
+  historyEl.innerHTML = ''; //clears the table of previous comments
+  let response = fetch('/delete-comments');
+}
+
+/**
  * Leads user to a selected project.
  */
 function chooseFeaturedProj() {
