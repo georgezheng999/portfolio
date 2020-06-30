@@ -36,6 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
 
+  private final GSONOBj = new Gson();
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
@@ -55,7 +57,7 @@ public class DataServlet extends HttpServlet {
       comments.add(comment);
     }
     response.setContentType("application/json");
-    final String json = new Gson().toJson(comments);
+    final String json = GSONOBj.toJson(comments);
     response.getWriter().println(json);
   }
 

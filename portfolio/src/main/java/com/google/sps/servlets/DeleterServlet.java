@@ -35,7 +35,6 @@ public class DeleterServlet extends HttpServlet {
     for (final Key keyToDelete : keysToDelete) {
       datastore.delete(keyToDelete);
     }
-    System.out.println("all comments delted");
     response.sendRedirect("/index.html");
   }
 
