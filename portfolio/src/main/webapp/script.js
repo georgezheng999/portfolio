@@ -22,10 +22,11 @@ function createListElement(comment) {
  * Deletes comments from the server.
  */
 async function deleteComments() {
-  const historyEl = document.getElementById('comments-history');
-  historyEl.innerHTML = ''; //clears the table of displayed previous comments
   const request = new Request('/delete-comments', {method: 'POST', body: '{}'});
-  fetch(request).then(response => {})
+  fetch(request).then(response => {
+    const historyEl = document.getElementById('comments-history');
+    historyEl.innerHTML = ''; //clears the table of displayed previous comments
+  });
 }
 
 /**
