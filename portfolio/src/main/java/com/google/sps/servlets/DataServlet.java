@@ -19,6 +19,7 @@ import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -40,16 +41,13 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    final String userCommentLimit = request.getParameter("comment-limit");
+    final int commentLimit = Integer.parseInt(userCommentLimit); 
     Query query = new Query("Comment").addSort("created_at", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    final String userCommentLimit = request.getParameter("comment-limit");
-    final int commentLimit = Integer.parseInt(userCommentLimit); 
     final List<Comment> comments = new ArrayList<>();
-    for (final Entity entity : results.asIterable()) {
-      if (comments.size() == commentLimit) {
-        break;
-      }
+    for (final Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentLimit))) {
       final long id = entity.getKey().getId();
       final String text = (String) entity.getProperty("text");
       final long created_at = (long) entity.getProperty("created_at");
