@@ -30,9 +30,10 @@ public class DeleterServlet extends HttpServlet {
     List<Key> keysToDelete = new ArrayList<>();
     for (final Entity entity : results.asIterable()) {
       final long id = entity.getKey().getId();
-      final Key keyToDelete = KeyFactory.createKey("Comment", id);
-      datastore.delete(keyToDelete);
+      final Key key = KeyFactory.createKey("Comment", id);
+      keysToDelete.add(key);
     }
+    datastore.delete(keysToDelete);
     response.sendRedirect("/index.html");
   }
 
