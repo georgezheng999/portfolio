@@ -32,11 +32,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that handles viewing and adding comments.*/
+
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
 
-  private final GSONOBj = new Gson();
+  private final Gson GSON_OBJECT = new Gson();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,7 +57,7 @@ public class DataServlet extends HttpServlet {
       comments.add(comment);
     }
     response.setContentType("application/json");
-    final String json = GSONOBj.toJson(comments);
+    final String json = GSON_OBJECT.toJson(comments);
     response.getWriter().println(json);
   }
 
