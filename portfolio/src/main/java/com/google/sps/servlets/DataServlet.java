@@ -15,31 +15,59 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
-import com.google.sps.data.Comments;
+import com.google.sps.data.Comment;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns comments */
+
 @WebServlet("/comments")
 public class DataServlet extends HttpServlet {
 
-  private final Comments comments = new Comments();
   private final Gson GSON_OBJECT = new Gson();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    final String userCommentLimit = request.getParameter("comment-limit");
+    final int commentLimit = Math.max(0, Integer.parseInt(userCommentLimit)); //handle negative input
+    Query query = new Query("Comment").addSort("createdAt", SortDirection.DESCENDING);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+    final List<Comment> comments = new ArrayList<>();
+    for (final Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentLimit))) {
+      final long id = entity.getKey().getId();
+      final String text = (String) entity.getProperty("text");
+      final long createdAt = (long) entity.getProperty("createdAt");
+      final Comment comment = new Comment(id, text, createdAt);
+      comments.add(comment);
+    }
     response.setContentType("application/json");
-    String json = GSON_OBJECT.toJson(comments);
+    final String json = GSON_OBJECT.toJson(comments);
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final String comment = request.getParameter("comment");
-    comments.addComment(comment);
+    final long createdAt = System.currentTimeMillis();
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("text", comment);
+    commentEntity.setProperty("createdAt", createdAt);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
     response.sendRedirect("/index.html");
   }
 

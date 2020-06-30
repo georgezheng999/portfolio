@@ -1,20 +1,32 @@
 /**
  * Gets comments from the server.
  */
-async function getComments() {
-  fetch('/comments').then(response => response.json()).then((comments) => {
-    const historyEl = document.getElementById('comments-history');
-    comments.history.forEach((line) => {
-      historyEl.appendChild(createListElement(line));
+async function getComments(limit) {
+  const historyEl = document.getElementById('comments-history');
+  historyEl.innerHTML = ''; //clears the table of previous comments
+  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((comments) => {
+    comments.forEach((comment) => {
+      historyEl.appendChild(createListElement(comment));
     });
   });
 }
 
 /** Creates an <li> element containing text. */
-function createListElement(text) {
+function createListElement(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = text;
+  liElement.innerText = comment.text;
   return liElement;
+}
+
+/**
+ * Deletes comments from the server.
+ */
+async function deleteComments() {
+  const request = new Request('/delete-comments', {method: 'POST', body: '{}'});
+  fetch(request).then(response => {
+    const historyEl = document.getElementById('comments-history');
+    historyEl.innerHTML = ''; //clears the table of displayed previous comments
+  });
 }
 
 /**
