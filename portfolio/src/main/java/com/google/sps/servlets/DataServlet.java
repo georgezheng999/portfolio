@@ -42,7 +42,7 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final String userCommentLimit = request.getParameter("comment-limit");
-    final int commentLimit = Integer.parseInt(userCommentLimit); 
+    final int commentLimit = Math.max(0, Integer.parseInt(userCommentLimit)); //handle negative input
     Query query = new Query("Comment").addSort("created_at", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
