@@ -25,7 +25,7 @@ async function deleteComments() {
   const historyEl = document.getElementById('comments-history');
   historyEl.innerHTML = ''; //clears the table of displayed previous comments
   const request = new Request('/delete-comments', {method: 'POST', body: '{}'});
-  fetch(request).then(response => { if (response.status === 200) { return response.json(); } else { throw new Error('Something went wrong on api server!'); } })
+  fetch(request).then(response => { if (response.status === 200) { return response.json(); } else { throw new Error('Something went wrong on server!'); } })
 }
 
 /**
