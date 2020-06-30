@@ -4,16 +4,16 @@
 async function getComments() {
   fetch('/comments').then(response => response.json()).then((comments) => {
     const historyEl = document.getElementById('comments-history');
-    comments.history.forEach((line) => {
-      historyEl.appendChild(createListElement(line));
+    comments.history.forEach((comment) => {
+      historyEl.appendChild(createListElement(comment));
     });
   });
 }
 
 /** Creates an <li> element containing text. */
-function createListElement(text) {
+function createListElement(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = text;
+  liElement.innerText = comment.body;
   return liElement;
 }
 
