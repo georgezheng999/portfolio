@@ -4,7 +4,7 @@
 async function getComments() {
   fetch('/comments').then(response => response.json()).then((comments) => {
     const historyEl = document.getElementById('comments-history');
-    comments.history.forEach((comment) => {
+    comments.forEach((comment) => {
       historyEl.appendChild(createListElement(comment));
     });
   });

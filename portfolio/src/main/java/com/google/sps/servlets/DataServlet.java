@@ -17,7 +17,6 @@ import com.google.gson.*;
 import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.SortDirection;
-
 import java.io.IOException;
 import java.util.*;
 import javax.servlet.annotation.WebServlet;
