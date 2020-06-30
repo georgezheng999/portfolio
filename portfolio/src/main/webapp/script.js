@@ -1,10 +1,20 @@
 /**
- * Fetches a message from the server and adds it to the DOM.
+ * Gets comments from the server.
  */
-async function getMsg() {
-  const response = await fetch('/data');
-  const quote = await response.text();
-  document.getElementById('message-container').innerText = quote;
+async function getComments() {
+  fetch('/comments').then(response => response.json()).then((comments) => {
+    const historyEl = document.getElementById('comments-history');
+    comments.history.forEach((line) => {
+      historyEl.appendChild(createListElement(line));
+    });
+  });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
 
 /**
