@@ -36,9 +36,9 @@ public class DataServlet extends HttpServlet {
     final List<Comment> comments = new ArrayList<>();
     for (final Entity entity : results.asIterable()) {
       final long id = entity.getKey().getId();
-      final String title = (String) entity.getProperty("title");
+      final String text = (String) entity.getProperty("text");
       final long timestamp = (long) entity.getProperty("timestamp");
-      final Comment comment = new Comment(id, title, timestamp);
+      final Comment comment = new Comment(id, text, timestamp);
       comments.add(comment);
     }
     response.setContentType("application/json");

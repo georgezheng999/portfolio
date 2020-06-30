@@ -13,7 +13,7 @@ async function getComments() {
 /** Creates an <li> element containing text. */
 function createListElement(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.body;
+  liElement.innerText = comment.text;
   return liElement;
 }
 
