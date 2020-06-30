@@ -40,7 +40,7 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("created_at", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     final String userCommentLimit = request.getParameter("comment-limit");
@@ -52,8 +52,8 @@ public class DataServlet extends HttpServlet {
       }
       final long id = entity.getKey().getId();
       final String text = (String) entity.getProperty("text");
-      final long timestamp = (long) entity.getProperty("timestamp");
-      final Comment comment = new Comment(id, text, timestamp);
+      final long created_at = (long) entity.getProperty("created_at");
+      final Comment comment = new Comment(id, text, created_at);
       comments.add(comment);
     }
     response.setContentType("application/json");
@@ -64,10 +64,10 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final String comment = request.getParameter("comment");
-    final long timestamp = System.currentTimeMillis();
+    final long created_at = System.currentTimeMillis();
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("text", comment);
-    commentEntity.setProperty("timestamp", timestamp);
+    commentEntity.setProperty("created_at", created_at);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
     response.sendRedirect("/index.html");

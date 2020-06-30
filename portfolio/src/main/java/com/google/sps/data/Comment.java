@@ -12,12 +12,12 @@ public class Comment {
 
   private final long id;
   private final String text;
-  private final long timestamp;
+  private final long created_at;
 
-  public Comment(long id, String text, long timestamp) {
+  public Comment(long id, String text, long created_at) {
     this.id = id;
     this.text = text;
-    this.timestamp = timestamp;
+    this.created_at = created_at;
   }
 
 }
