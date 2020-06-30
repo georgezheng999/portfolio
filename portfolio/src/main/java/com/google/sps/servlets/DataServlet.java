@@ -34,11 +34,11 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     final String userCommentLimit = request.getParameter("comment-limit");
-    final int commentLimit = Integer.parseInt(userCommentLimit); //defaults to -1
+    final int commentLimit = Integer.parseInt(userCommentLimit); 
     final List<Comment> comments = new ArrayList<>();
     for (final Entity entity : results.asIterable()) {
       if (comments.size() == commentLimit) {
-        break; //if commentLimit is -1, the overall loop will never be broken out of which will take all the comments
+        break;
       }
       final long id = entity.getKey().getId();
       final String text = (String) entity.getProperty("text");

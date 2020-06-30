@@ -6,15 +6,17 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getComments()">
+  <body>
     <div id="name">
       <h1>George Zheng</h1>
     </div>
     <hr>
     <ul id="comments-history"></ul>
+    <p>Enter number of comments to view:</p>
+    <input type="number" onchange="getComments(this.value)">
+    <button type = "button">View Comments</button>
     <form action="/comments" method="POST">
       <p>Add a new comment:</p>
-      <input type="number" name="comment-limit" value="-1">
       <input type="text" name="comment" value="">
       <br/><br/>
       <input type="submit" />

@@ -1,9 +1,10 @@
 /**
  * Gets comments from the server.
  */
-async function getComments() {
-  fetch('/comments').then(response => response.json()).then((comments) => {
-    const historyEl = document.getElementById('comments-history');
+async function getComments(limit) {
+  const historyEl = document.getElementById('comments-history');
+  historyEl.innerHTML = ''; //clears the table of previous comments
+  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((comments) => {
     comments.forEach((comment) => {
       historyEl.appendChild(createListElement(comment));
     });
