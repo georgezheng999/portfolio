@@ -7,8 +7,6 @@ async function getMsg() {
   document.getElementById('message-container').innerText = quote;
 }
 
-
-
 /**
  * Leads user to a selected project.
  */
