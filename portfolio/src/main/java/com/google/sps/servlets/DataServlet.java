@@ -27,18 +27,18 @@ import javax.servlet.http.HttpServletResponse;
 public class DataServlet extends HttpServlet {
 
   private final Comments comments = new Comments();
-  private final Gson GSONObj = new Gson();
+  private final Gson GSON_OBJECT = new Gson();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
-    String json = GSONObj.toJson(comments);
+    String json = GSON_OBJECT.toJson(comments);
     response.getWriter().println(json);
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  	final String comment = request.getParameter("comment");
+    final String comment = request.getParameter("comment");
     comments.addComment(comment);
     response.sendRedirect("/index.html");
   }
