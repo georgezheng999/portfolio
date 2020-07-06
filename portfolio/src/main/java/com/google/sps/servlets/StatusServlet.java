@@ -36,4 +36,5 @@ public class StatusServlet extends HttpServlet {
     final String json = GSON_OBJECT.toJson(userLoggedIn);
     response.getWriter().println(json);
   }
+  
 }
