@@ -2,9 +2,13 @@
  * If user is logged in, displays the commenting form, otherwise prompts the user to log in.
  */
 async function handleLogin() {
-  fetch('/login').then(response => {
-    const contentEl = document.getElementById('content');
-    contentEl.innerHTML = response;
+  fetch('/status').then(response => response.json()).then((isLoggedIn) => {
+    if (isLoggedIn) {
+      const elToHide = document.getElementById('comments-history');
+      console.log("is logged in");
+    } else {
+      window.location.replace("/login");
+    }
   });
 }
 
