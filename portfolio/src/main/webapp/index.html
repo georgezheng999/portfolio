@@ -11,13 +11,13 @@
       <button type="button" onclick="deleteComments()">Delete Comments</button>
       <ul id="comments-history"></ul>
       <form>
-        <p>Enter number of comments to view:</p>
+        <label for="lim">Enter number of comments to view:</label>
         <input type="number" min="1" value="1" name="lim">
         <br/><br/>
         <button type="button" onclick="getComments(lim.value)">View Comments</button>
       </form>
       <form action="/comments" method="POST">
-        <p>Add a new comment:</p>
+        <label for="comment">Add a new comment:</label>
         <input type="text" name="comment">
         <br/><br/>
         <input type="submit" />
