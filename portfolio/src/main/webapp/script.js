@@ -28,7 +28,7 @@ async function getComments(limit) {
 /** Creates an <li> element containing text. */
 function createListElement(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.text;
+  liElement.innerText = comment.text + ' - ' + comment.email;
   return liElement;
 }
 
