@@ -3,10 +3,7 @@
  */
 async function handleLogin() {
   fetch('/status').then(response => response.json()).then((isLoggedIn) => {
-    if (isLoggedIn) {
-      const elToHide = document.getElementById('comments-history');
-      console.log("is logged in");
-    } else {
+    if (!isLoggedIn) {
       window.location.replace("/login");
     }
   });
