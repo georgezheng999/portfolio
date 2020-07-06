@@ -1,4 +1,14 @@
 /**
+ * If user is logged in, displays the commenting form, otherwise prompts the user to log in.
+ */
+async function handleLogin() {
+  fetch('/login').then(response => {
+    const contentEl = document.getElementById('content');
+    contentEl.innerHTML = response;
+  });
+}
+
+/**
  * Gets comments from the server.
  */
 async function getComments(limit) {
