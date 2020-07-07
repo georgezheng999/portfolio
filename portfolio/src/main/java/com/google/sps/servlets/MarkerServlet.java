@@ -25,7 +25,7 @@ import com.google.sps.data.Marker;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,10 +41,8 @@ public class MarkerServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
-
-    Collection<Marker> markers = getMarkers();
-    String json = GSON_OBJECT.toJson(markers);
-
+    final List<Marker> markers = getMarkers();
+    final String json = GSON_OBJECT.toJson(markers);
     response.getWriter().println(json);
   }
 
@@ -55,7 +53,6 @@ public class MarkerServlet extends HttpServlet {
     final double lng = Double.parseDouble(request.getParameter("lng"));
     final UserService userService = UserServiceFactory.getUserService();
     final String content = userService.getCurrentUser().getEmail();
-
     final Marker marker = new Marker(lat, lng, content);
     storeMarker(marker);
   }
@@ -63,16 +60,13 @@ public class MarkerServlet extends HttpServlet {
   /** Fetches markers from Datastore. */
   private Collection<Marker> getMarkers() {
     final Collection<Marker> markers = new ArrayList<>();
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query = new Query("Marker");
-    PreparedQuery results = datastore.prepare(query);
-
+    final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    final Query query = new Query("Marker");
+    final PreparedQuery results = datastore.prepare(query);
     for (Entity entity : results.asIterable()) {
       final double lat = (double) entity.getProperty("lat");
       final double lng = (double) entity.getProperty("lng");
       final String content = (String) entity.getProperty("content");
-
       final Marker marker = new Marker(lat, lng, content);
       markers.add(marker);
     }
@@ -85,7 +79,6 @@ public class MarkerServlet extends HttpServlet {
     markerEntity.setProperty("lat", marker.getLat());
     markerEntity.setProperty("lng", marker.getLng());
     markerEntity.setProperty("content", marker.getContent());
-
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(markerEntity);
   }
