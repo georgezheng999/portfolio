@@ -51,8 +51,8 @@ function initMap() {
       {center: {lat: 38.5949, lng: -94.8923}, zoom: 4});
   map.addListener('click', (event) => {
     postMarker(event.latLng.lat(), event.latLng.lng());
+    fetchMarkers();
   });
-  fetchMarkers();
 }
 
 /** Fetches markers from the backend and adds them to the map. */
