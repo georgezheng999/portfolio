@@ -40,14 +40,48 @@ async function deleteComments() {
   });
 }
 
-/**
- * Initializes a map.
- */
+let map;
+let editMarker;
+
+
+/** Creates a map that allows users to add markers. */
 function initMap() {
-  var map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 40.7128, lng: 74.0060 },
-    zoom: 8
+  map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: {lat: 38.5949, lng: -94.8923}, zoom: 4});
+  map.addListener('click', (event) => {
+    postMarker(event.latLng.lat(), event.latLng.lng());
   });
+  fetchMarkers();
+}
+
+/** Fetches markers from the backend and adds them to the map. */
+function fetchMarkers() {
+  fetch('/markers').then(response => response.json()).then((markers) => {
+    markers.forEach(
+        (marker) => {
+            createMarkerForDisplay(marker.lat, marker.lng, marker.content)});
+  });
+}
+
+/** Creates a marker that shows a read-only info window when clicked. */
+function createMarkerForDisplay(lat, lng, content) {
+  const marker =
+      new google.maps.Marker({position: {lat: lat, lng: lng}, map: map});
+
+  const infoWindow = new google.maps.InfoWindow({content: content});
+  marker.addListener('click', () => {
+    infoWindow.open(map, marker);
+  });
+}
+
+/** Sends a marker to the backend for saving. */
+function postMarker(lat, lng) {
+  const params = new URLSearchParams();
+  params.append('lat', lat);
+  params.append('lng', lng);
+
+  fetch('/markers', {method: 'POST', body: params});
 }
 
 /**
