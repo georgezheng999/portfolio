@@ -1,4 +1,15 @@
 /**
+ * If user is logged in, displays the commenting form, otherwise prompts the user to log in.
+ */
+async function handleLogin() {
+  fetch('/status').then(response => response.json()).then((isLoggedIn) => {
+    if (!isLoggedIn) {
+      window.location.replace("/login");
+    }
+  });
+}
+
+/**
  * Gets comments from the server.
  */
 async function getComments(limit) {
@@ -14,7 +25,7 @@ async function getComments(limit) {
 /** Creates an <li> element containing text. */
 function createListElement(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.text;
+  liElement.innerText = comment.text + ' - ' + comment.email;
   return liElement;
 }
 

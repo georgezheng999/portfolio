@@ -28,6 +28,8 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -50,8 +52,9 @@ public class DataServlet extends HttpServlet {
     for (final Entity entity : results.asIterable(FetchOptions.Builder.withLimit(commentLimit))) {
       final long id = entity.getKey().getId();
       final String text = (String) entity.getProperty("text");
+      final String email = (String) entity.getProperty("creatorEmail");
       final long createdAt = (long) entity.getProperty("createdAt");
-      final Comment comment = new Comment(id, text, createdAt);
+      final Comment comment = new Comment(id, text, createdAt, email);
       comments.add(comment);
     }
     response.setContentType("application/json");
@@ -61,11 +64,18 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    final UserService userService = UserServiceFactory.getUserService();
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/index.html");
+      return;
+    }
+    final String email = userService.getCurrentUser().getEmail();
     final String comment = request.getParameter("comment");
     final long createdAt = System.currentTimeMillis();
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("createdAt", createdAt);
+    commentEntity.setProperty("creatorEmail", email);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
     response.sendRedirect("/index.html");
