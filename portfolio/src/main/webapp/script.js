@@ -1,3 +1,6 @@
+let map;
+let editMarker;
+
 /**
  * If user is logged in, displays the commenting form, otherwise prompts the user to log in.
  */
@@ -39,9 +42,6 @@ async function deleteComments() {
     historyEl.innerHTML = ''; //clears the table of displayed previous comments
   });
 }
-
-let map;
-let editMarker;
 
 /** Creates a map that allows users to add markers. */
 function initMap() {
