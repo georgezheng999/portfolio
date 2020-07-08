@@ -45,6 +45,14 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final String userCommentLimit = request.getParameter("comment-limit");
     final int commentLimit = Math.max(0, Integer.parseInt(userCommentLimit)); //handle negative input
+    final List<Comment> comments = new ArrayList<>();
+    response.setContentType("application/json");
+    final String json = GSON_OBJECT.toJson(comments);
+    response.getWriter().println(json);
+  }
+
+  // Retrieves all comments in datastore
+  private List<Comment> getComments() {
     Query query = new Query("Comment").addSort("createdAt", SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -57,9 +65,7 @@ public class DataServlet extends HttpServlet {
       final Comment comment = new Comment(id, text, createdAt, email);
       comments.add(comment);
     }
-    response.setContentType("application/json");
-    final String json = GSON_OBJECT.toJson(comments);
-    response.getWriter().println(json);
+    return comments;
   }
 
   @Override
