@@ -93,6 +93,7 @@ public class DataServlet extends HttpServlet {
       }
     }
     final Map<Comment, List<Comment>> childrenMapping = getChildrenMapping(allComments, idToComment);
+    childrenMapping.putIfAbsent(dummy, new ArrayList<>());
     final CommentNode dummyRoot = createTree(dummy, childrenMapping);
     return dummyRoot;
   }
@@ -100,6 +101,7 @@ public class DataServlet extends HttpServlet {
   // canonical DFS tree traversal, done in linear time and space 
   private CommentNode createTree(Comment cmt, Map<Comment, List<Comment>> childrenMapping) {
     final CommentNode root = new CommentNode(cmt);
+    System.out.println(childrenMapping);
     for (final Comment childComment : childrenMapping.get(cmt)) { 
       root.addChildNode(createTree(childComment, childrenMapping));
     }
