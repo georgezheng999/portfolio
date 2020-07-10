@@ -2,6 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.google.appengine.api.datastore.Entity;
 
 /**
  * Class representing a comment. This class is immutable and threadsafe.
@@ -10,12 +11,13 @@ import java.util.List;
  */
 public class Comment {
 
-  private final ROOT_COMMENT_ID = 0;
+  private final long ROOT_COMMENT_ID = 0;
   private final long id;
   private final String text;
   private final long createdAt;
   private final String email;
   private final long parent;
+  private final long root;
 
   public Comment(long id, String text, long createdAt, String email, long parent, long root) {
     this.id = id;
@@ -27,12 +29,12 @@ public class Comment {
   }
 
   public Comment(Entity entity) {
-    final long this.id = entity.getKey().getId();
-    final String this.text = (String) entity.getProperty("text");
-    final String this.email = (String) entity.getProperty("creatorEmail");
-    final long this.createdAt = (long) entity.getProperty("createdAt");
-    final long this.parent = (long) entity.getProperty("parent");
-    final long this.root = (long) entity.getProperty("root");
+    this.id = entity.getKey().getId();
+    this.text = (String) entity.getProperty("text");
+    this.email = (String) entity.getProperty("creatorEmail");
+    this.createdAt = (long) entity.getProperty("createdAt");
+    this.parent = (long) entity.getProperty("parent");
+    this.root = (long) entity.getProperty("root");
   }
 
   //This constructor is associated with the creation of a dummy, root level comment (a supernode for the comment tree)

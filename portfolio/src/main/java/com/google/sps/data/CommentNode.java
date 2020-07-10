@@ -10,7 +10,7 @@ import java.util.List;
  *
  * <p>Note: The private variables in this class are converted into JSON.
  */
-class CommentNode {
+public class CommentNode {
 
   private final Comment comment;
   private final List<CommentNode> children;
@@ -20,7 +20,6 @@ class CommentNode {
     this.children = new ArrayList<>();
   }
 
-  // this class is package private, which prevents representation exposure
   // defense copying is not used here for performance considerations, even though
   // CommentNode is mutable and should not be directly added to children
   public void addChildNode(CommentNode cmtNode) {

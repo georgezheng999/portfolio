@@ -25,12 +25,16 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import javax.servlet.annotation.WebServlet;
@@ -57,7 +61,7 @@ public class DataServlet extends HttpServlet {
   // assumes acyclic invariant of comments: assumes that an ancestor path exists from A to B if and only if A was B was created before A. 
   // furthermore, assumes that the graph of vertices being comments and edges being a parent-child relation is a directed acyclic graph. 
   // does not rely on comments having a tree structure (connected graph with exactly n vertices and n-1 edges), but that should be the case!
-  private List<CommentNode> getComments(int commentLimit) {
+  private CommentNode getComments(int commentLimit) {
     Query query = new Query("Comment")
                     .setFilter(FilterOperator.EQUAL.of("parent",0))
                       .addSort("createdAt", SortDirection.ASCENDING); 
@@ -75,7 +79,7 @@ public class DataServlet extends HttpServlet {
       rootCommentIds.add(id);
       allComments.add(comment);
     }
-    final Set<Long> hashedRootCommentIds = new HashMap<>(rootCommentIds);
+    final Set<Long> hashedRootCommentIds = new HashSet<>(rootCommentIds);
     if (!rootCommentIds.isEmpty()) {
       query = new Query("Comment")
                 .setFilter(new FilterPredicate("root", FilterOperator.IN, hashedRootCommentIds))
@@ -97,7 +101,7 @@ public class DataServlet extends HttpServlet {
   private CommentNode createTree(Comment cmt, Map<Comment, List<Comment>> childrenMapping) {
     final CommentNode root = new CommentNode(cmt);
     for (final Comment childComment : childrenMapping.get(cmt)) { 
-      root.addChildNode(createTree(childComment));
+      root.addChildNode(createTree(childComment, childrenMapping));
     }
     return root;
   }
@@ -111,7 +115,7 @@ public class DataServlet extends HttpServlet {
     for (final Comment cmt : linearComments) {
       final Comment parentComment = idToComment.get(cmt.getParent());
       associations.putIfAbsent(parentComment, new ArrayList<>());
-      associations.get(parentComment).add(comment);
+      associations.get(parentComment).add(cmt);
     }
     return associations;
   }
@@ -126,7 +130,7 @@ public class DataServlet extends HttpServlet {
     final String email = userService.getCurrentUser().getEmail();
     final String comment = request.getParameter("comment");
     final long createdAt = System.currentTimeMillis();
-    final long parent = request.getParameter("parent");
+    final long parent = Long.parseLong(request.getParameter("parent"));
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("createdAt", createdAt);
