@@ -93,7 +93,6 @@ public class DataServlet extends HttpServlet {
       }
     }
     final Map<Comment, List<Comment>> childrenMapping = getChildrenMapping(allComments, idToComment);
-    childrenMapping.putIfAbsent(dummy, new ArrayList<>());
     final CommentNode dummyRoot = createTree(dummy, childrenMapping);
     return dummyRoot;
   }
@@ -102,7 +101,7 @@ public class DataServlet extends HttpServlet {
   private CommentNode createTree(Comment cmt, Map<Comment, List<Comment>> childrenMapping) {
     final CommentNode root = new CommentNode(cmt);
     System.out.println(childrenMapping);
-    for (final Comment childComment : childrenMapping.get(cmt)) { 
+    for (final Comment childComment : childrenMapping.getOrDefault(cmt, new ArrayList<Comment>())) { 
       root.addChildNode(createTree(childComment, childrenMapping));
     }
     return root;
@@ -139,6 +138,7 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("createdAt", createdAt);
     commentEntity.setProperty("creatorEmail", email);
     commentEntity.setProperty("parent", parent);
+    commentEntity.setProperty("root", root);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
     response.sendRedirect("/index.html");

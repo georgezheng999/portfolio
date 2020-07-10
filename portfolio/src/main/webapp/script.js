@@ -31,7 +31,7 @@ function renderTree(root, ele) {
   ele.appendChild(createCommentLi(root.comment));
   for (let child of root.children) {
     const ul = document.createElement('ul');
-    createListElement(child, ul);
+    renderTree(child, ul);
     ele.appendChild(ul);
   }
 }
