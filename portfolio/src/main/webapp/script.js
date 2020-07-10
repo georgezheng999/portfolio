@@ -38,12 +38,13 @@ function renderTree(root, ele) {
 
 function createCommentLi(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.text + ' - ' + comment.email + "   ";
-  liElement.innerText += `<form action="/comments" method="POST">
+  const root = (parseInt(comment.parent) == 0) ? comment.id : comment.root;
+  liElement.innerHTML = comment.text + ' - ' + comment.email + "   ";
+  liElement.innerHTML += `<form action="/comments" method="POST">
                             <label for="comment">Reply: </label>
                             <input type="text" name="comment">
                             <input type="hidden" name="parent" value="${comment.id}"/>
-                            <input type="hidden" name="root" value="${comment.root}"/>
+                            <input type="hidden" name="root" value="${root}"/>
                             <input type="submit" />
                           </form>`;
   return liElement;
