@@ -79,7 +79,7 @@ public class DataServlet extends HttpServlet {
       rootCommentIds.add(id);
       allComments.add(comment);
     }
-    final Set<Long> hashedRootCommentIds = new HashSet<>(rootCommentIds);
+    final Set<Long> hashedRootCommentIds = new HashSet<>(rootCommentIds);//hashing for O(1) membership check
     if (!rootCommentIds.isEmpty()) {
       query = new Query("Comment")
                 .setFilter(new FilterPredicate("root", FilterOperator.IN, hashedRootCommentIds))
@@ -100,7 +100,6 @@ public class DataServlet extends HttpServlet {
   // canonical DFS tree traversal, done in linear time and space 
   private CommentNode createTree(Comment cmt, Map<Comment, List<Comment>> childrenMapping) {
     final CommentNode root = new CommentNode(cmt);
-    System.out.println(childrenMapping);
     for (final Comment childComment : childrenMapping.getOrDefault(cmt, new ArrayList<Comment>())) { 
       root.addChildNode(createTree(childComment, childrenMapping));
     }

@@ -21,7 +21,6 @@ async function getComments(limit) {
   const historyEl = document.getElementById('comments-history');
   historyEl.innerHTML = ''; //clears the table of previous comments
   fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((root) => {
-    console.log(root);
     renderTree(root, historyEl);
   });
 }
@@ -49,7 +48,6 @@ function createCommentLi(comment) {
                           </form>`;
   return liElement;
 }
-
 
 /**
  * Deletes comments from the server.
