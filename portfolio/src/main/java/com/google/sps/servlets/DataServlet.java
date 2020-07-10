@@ -131,6 +131,7 @@ public class DataServlet extends HttpServlet {
     final String comment = request.getParameter("comment");
     final long createdAt = System.currentTimeMillis();
     final long parent = Long.parseLong(request.getParameter("parent"));
+    final long root = Long.parseLong(request.getParameter("root"));
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("text", comment);
     commentEntity.setProperty("createdAt", createdAt);

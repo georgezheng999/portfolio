@@ -14,25 +14,41 @@ async function handleLogin() {
 
 /**
  * Gets comments from the server.
- * response.json() will yield a json map, where each json map represents a single comment with the associations found in 
+ * response.json() will yield a json map, where each json zmap represents a single comment with the associations found in 
  * Comment.java, but additionally, comment[children] maps to a json array of maps recursively representing the children of the comment. 
  */
 async function getComments(limit) {
   const historyEl = document.getElementById('comments-history');
   historyEl.innerHTML = ''; //clears the table of previous comments
-  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((comments) => {
-    comments.forEach((comment) => {
-      historyEl.appendChild(createListElement(comment));
-    });
+  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((root) => {
+    console.log(root);
+    renderTree(root, historyEl);
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(comment) {
+/** Renders the subtree rooted at root at the ul ele*/
+function renderTree(root, ele) {
+  ele.appendChild(createCommentLi(root.comment));
+  for (let child of root.children) {
+    const ul = document.createElement('ul');
+    createListElement(child, ul);
+    ele.appendChild(ul);
+  }
+}
+
+function createCommentLi(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.text + ' - ' + comment.email;
+  liElement.innerText = comment.text + ' - ' + comment.email + "   ";
+  liElement.innerText += `<form action="/comments" method="POST">
+                            <label for="comment">Reply: </label>
+                            <input type="text" name="comment">
+                            <input type="hidden" name="parent" value="${comment.id}"/>
+                            <input type="hidden" name="root" value="${comment.root}"/>
+                            <input type="submit" />
+                          </form>`;
   return liElement;
 }
+
 
 /**
  * Deletes comments from the server.

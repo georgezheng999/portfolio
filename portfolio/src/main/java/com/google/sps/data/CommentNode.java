@@ -21,7 +21,8 @@ public class CommentNode {
   }
 
   // defense copying is not used here for performance considerations, even though
-  // CommentNode is mutable and should not be directly added to children
+  // CommentNode is mutable and should not be directly added to children, which can
+  // lead to representation exposure.
   public void addChildNode(CommentNode cmtNode) {
     children.add(cmtNode);
   }
