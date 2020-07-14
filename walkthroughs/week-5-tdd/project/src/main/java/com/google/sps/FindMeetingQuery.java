@@ -32,6 +32,17 @@ public final class FindMeetingQuery {
     return false;
   }
 
+  private boolean eventHasConflictOpt(Event e, MeetingRequest request) {
+    final Set<String> mandAttendees = request.getAttendees();
+    final Set<String> optAttendees = request.getOptionalAttendees();
+    for (final String eventAttendee : e.getAttendees()) {
+      if (mandAttendees.contains(eventAttendee) || optAttendees.contains(eventAttendee)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public Collection<TimeRange> getOpenTimes(List<TimeRange> conflictTimes, MeetingRequest request) {
     Collections.sort(conflictTimes, TimeRange.ORDER_BY_START);
     final Collection<TimeRange> queryResult = new ArrayList<>();
@@ -51,14 +62,18 @@ public final class FindMeetingQuery {
 
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     List<TimeRange> mandConflictTimes = new ArrayList<>();
+    List<TimeRange> mandAndOptConflictTimes = new ArrayList<>();
     mandConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
     for (final Event e : events) {
       if (eventHasConflict(e, request)) {
         mandConflictTimes.add(e.getWhen());
-      }      
+        mandAndOptConflictTimes.add(e.getWhen());
+      } else if (eventHasConflictOpt(e, request)) {
+        mandAndOptConflictTimes.add(e.getWhen());
+      }
     }
     final Collection<TimeRange> mandatoryUserTimes = getOpenTimes(mandConflictTimes, request);
-    List<TimeRange> mandAndOptConflictTimes = new ArrayList<>(mandConflictTimes);
-    
+    final Collection<TimeRange> mandAndOptUserTimes = getOpenTimes(mandAndOptConflictTimes, request);
+    return (mandAndOptUserTimes.isEmpty()) ? mandatoryUserTimes : mandAndOptUserTimes; 
   }
 }
