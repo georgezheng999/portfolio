@@ -33,8 +33,8 @@ public final class FindMeetingQuery {
   }
 
   private boolean eventHasConflictOpt(Event e, MeetingRequest request) {
-    final Set<String> mandAttendees = request.getAttendees();
-    final Set<String> optAttendees = request.getOptionalAttendees();
+    final Collection<String> mandAttendees = request.getAttendees();
+    final Collection<String> optAttendees = request.getOptionalAttendees();
     for (final String eventAttendee : e.getAttendees()) {
       if (mandAttendees.contains(eventAttendee) || optAttendees.contains(eventAttendee)) {
         return true;
@@ -64,6 +64,7 @@ public final class FindMeetingQuery {
     List<TimeRange> mandConflictTimes = new ArrayList<>();
     List<TimeRange> mandAndOptConflictTimes = new ArrayList<>();
     mandConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
+    mandAndOptConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
     for (final Event e : events) {
       if (eventHasConflict(e, request)) {
         mandConflictTimes.add(e.getWhen());
