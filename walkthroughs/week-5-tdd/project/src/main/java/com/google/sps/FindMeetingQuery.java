@@ -51,9 +51,9 @@ public final class FindMeetingQuery {
     for (int i = 1; i < conflictTimes.size(); i++) {
       final int durationDiff = conflictTimes.get(i).start() - maxEndingTimeSoFar; 
       if (durationDiff >= requestDuration) {
-        queryResult.add(TimeRange.fromStartDuration(conflictTimes.get(i - 1).end(), durationDiff));
+        queryResult.add(TimeRange.fromStartDuration(maxEndingTimeSoFar, durationDiff));
       }
-      maxEndingTimeSoFar = max(maxEndingTimeSoFar, conflictTimes.get(i).end());
+      maxEndingTimeSoFar = Math.max(maxEndingTimeSoFar, conflictTimes.get(i).end());
     }
     if (TimeRange.END_OF_DAY - maxEndingTimeSoFar >= requestDuration) {
       queryResult.add(TimeRange.fromStartEnd(maxEndingTimeSoFar, TimeRange.END_OF_DAY, true));
@@ -76,6 +76,6 @@ public final class FindMeetingQuery {
     }
     final Collection<TimeRange> mandatoryUserTimes = getOpenTimes(mandConflictTimes, request);
     final Collection<TimeRange> mandAndOptUserTimes = getOpenTimes(mandAndOptConflictTimes, request);
-    return (mandAndOptUserTimes.isEmpty()) ? mandatoryUserTimes : mandAndOptUserTimes; 
+    return (mandAndOptUserTimes.isEmpty() && !request.getAttendees().isEmpty()) ? mandatoryUserTimes : mandAndOptUserTimes; 
   }
 }
