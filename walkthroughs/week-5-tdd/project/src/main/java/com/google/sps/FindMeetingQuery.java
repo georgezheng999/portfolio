@@ -32,27 +32,33 @@ public final class FindMeetingQuery {
     return false;
   }
 
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    List<TimeRange> conflictTimes = new ArrayList<>();
-    conflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
-    for (final Event e : events) {
-      if (eventHasConflict(e, request)) {
-        conflictTimes.add(e.getWhen());
-      }      
-    }
-    Collections.sort(conflictTimes, conflictTimes.ORDER_BY_START);
+  public Collection<TimeRange> getOpenTimes(List<TimeRange> conflictTimes, MeetingRequest request) {
+    Collections.sort(conflictTimes, TimeRange.ORDER_BY_START);
     final Collection<TimeRange> queryResult = new ArrayList<>();
-    final int requestDuration = request.getDuration();
+    final int requestDuration = (int) request.getDuration();
     for (int i = 1; i < conflictTimes.size(); i++) {
       final int durationDiff = conflictTimes.get(i).start() - conflictTimes.get(i - 1).end(); 
       if (durationDiff >= requestDuration) {
         queryResult.add(TimeRange.fromStartDuration(conflictTimes.get(i - 1).end(), durationDiff));
       }
     }
-    final int lastEventEndTime = conflictTimes.get(conflictTimes.size() - 1).end();
+    final int lastEventEndTime = conflictTimes.stream().map(e -> e.end()).max(Integer::compare).get();
     if (TimeRange.END_OF_DAY - lastEventEndTime >= requestDuration) {
       queryResult.add(TimeRange.fromStartEnd(lastEventEndTime, TimeRange.END_OF_DAY, true));
     }
     return queryResult;
+  }
+
+  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+    List<TimeRange> mandConflictTimes = new ArrayList<>();
+    mandConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
+    for (final Event e : events) {
+      if (eventHasConflict(e, request)) {
+        mandConflictTimes.add(e.getWhen());
+      }      
+    }
+    final Collection<TimeRange> mandatoryUserTimes = getOpenTimes(mandConflictTimes, request);
+    List<TimeRange> mandAndOptConflictTimes = new ArrayList<>(mandConflictTimes);
+    
   }
 }
