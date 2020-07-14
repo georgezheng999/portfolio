@@ -47,15 +47,16 @@ public final class FindMeetingQuery {
     Collections.sort(conflictTimes, TimeRange.ORDER_BY_START);
     final Collection<TimeRange> queryResult = new ArrayList<>();
     final int requestDuration = (int) request.getDuration();
+    int maxEndingTimeSoFar = conflictTimes.get(0).end();
     for (int i = 1; i < conflictTimes.size(); i++) {
-      final int durationDiff = conflictTimes.get(i).start() - conflictTimes.get(i - 1).end(); 
+      final int durationDiff = conflictTimes.get(i).start() - maxEndingTimeSoFar; 
       if (durationDiff >= requestDuration) {
         queryResult.add(TimeRange.fromStartDuration(conflictTimes.get(i - 1).end(), durationDiff));
       }
+      maxEndingTimeSoFar = max(maxEndingTimeSoFar, conflictTimes.get(i).end());
     }
-    final int lastEventEndTime = conflictTimes.stream().map(e -> e.end()).max(Integer::compare).get();
-    if (TimeRange.END_OF_DAY - lastEventEndTime >= requestDuration) {
-      queryResult.add(TimeRange.fromStartEnd(lastEventEndTime, TimeRange.END_OF_DAY, true));
+    if (TimeRange.END_OF_DAY - maxEndingTimeSoFar >= requestDuration) {
+      queryResult.add(TimeRange.fromStartEnd(maxEndingTimeSoFar, TimeRange.END_OF_DAY, true));
     }
     return queryResult;
   }
