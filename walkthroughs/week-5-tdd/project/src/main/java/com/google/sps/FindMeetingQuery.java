@@ -19,31 +19,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 public final class FindMeetingQuery {
 
-  private boolean eventHasConflict(Event e, MeetingRequest request) {
-    final Set<String> eventAttendees = e.getAttendees();
-    for (final String reqAttendee : request.getAttendees()) {
-      if (eventAttendees.contains(reqAttendee)) {
-        return true;
-      }
-    }
-    return false;
-  }
+  private static final TimeRange START_OF_DAY_TIME_RANGE = TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0);
 
-  private boolean eventHasConflictOpt(Event e, MeetingRequest request) {
-    final Collection<String> mandAttendees = request.getAttendees();
-    final Collection<String> optAttendees = request.getOptionalAttendees();
-    for (final String eventAttendee : e.getAttendees()) {
-      if (mandAttendees.contains(eventAttendee) || optAttendees.contains(eventAttendee)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public Collection<TimeRange> getOpenTimes(List<TimeRange> conflictTimes, MeetingRequest request) {
+  public Collection<TimeRange> getOptimizedOpenTimes(List<TimeRange> conflictTimes, MeetingRequest request) {
+    conflictTimes.add(START_OF_DAY_TIME_RANGE);
     Collections.sort(conflictTimes, TimeRange.ORDER_BY_START);
     final Collection<TimeRange> queryResult = new ArrayList<>();
     final int requestDuration = (int) request.getDuration();
@@ -61,21 +46,50 @@ public final class FindMeetingQuery {
     return queryResult;
   }
 
-  public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
+  public Collection<TimeRange> queryOptimized(Collection<Event> events, MeetingRequest request) {
+    final Map<String, List<TimeRange>> optAttToConflicts = new HashMap<>();
     List<TimeRange> mandConflictTimes = new ArrayList<>();
-    List<TimeRange> mandAndOptConflictTimes = new ArrayList<>();
-    mandConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
-    mandAndOptConflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0)); 
     for (final Event e : events) {
-      if (eventHasConflict(e, request)) {
-        mandConflictTimes.add(e.getWhen());
-        mandAndOptConflictTimes.add(e.getWhen());
-      } else if (eventHasConflictOpt(e, request)) {
-        mandAndOptConflictTimes.add(e.getWhen());
+      for (final String eventAttendee : e.getAttendees()) {
+        if (request.getAttendees().contains(eventAttendee)) {
+          mandConflictTimes.add(e.getWhen());
+        }
+        if (request.getOptionalAttendees().contains(eventAttendee)) {
+          getOptionalAttendees.putIfAbsent(eventAttendee, new ArrayList<TimeRange>()).add(e.getWhen());
+        }
       }
     }
-    final Collection<TimeRange> mandatoryUserTimes = getOpenTimes(mandConflictTimes, request);
-    final Collection<TimeRange> mandAndOptUserTimes = getOpenTimes(mandAndOptConflictTimes, request);
-    return (mandAndOptUserTimes.isEmpty() && !request.getAttendees().isEmpty()) ? mandatoryUserTimes : mandAndOptUserTimes; 
+    final List<String> optAttendees = new ArrayList<>(request.getOptionalAttendees());
+    Collection<TimeRange> queryOptResult =  new ArrayList<>();
+    int maxOptAttendeesAttained = 0;
+    for (final List<String> optAttSubset : powerSet(optAttendees)) {
+      if (maxOptAttendeesAttained > optAttSubset.size()) {
+        continue;
+      }
+      List<TimeRange> conflictTimes = new ArrayList<>(mandConflictTimes);
+      for (final String optAttendee : optAttSubset) {
+        conflictTimes.addAll(optAttToConflicts.getOrDefault(optAttendee, new ArrayList<>()));
+      }
+      final Collection<TimeRange> sol = getOptimizedOpenTimes(conflictTimes, request);
+      if (!sol.isEmpty() && maxOptAttendeesAttained < optAttSubset.size()) {
+        maxOptAttendeesAttained = optAttSubset.size();
+        queryOptResult = sol;
+      }
+    }
+    final Collection<TimeRange> mandatoryUserTimes = getOptimizedOpenTimes(mandConflictTimes, request);
+    return (!mandatoryUserTimes.isEmpty() && !queryOptResult.isEmpty()) ? queryOptResult : mandatoryUserTimes; 
   }
+
+  public List<List<String>> powerSet(List<String> optAttendees) {
+    List<List<String>> result = new ArrayList<>();
+    result.add(new ArrayList<String>());
+    for (final String attendee : optAttendees) {
+      for (int i = 0, n = result.size(); i < n; i++) {
+        result.add(new ArrayList<String>(result[i]));
+        result[i].add(optAttendees[i]);
+      }
+    }
+    return result;
+  }
+
 }
