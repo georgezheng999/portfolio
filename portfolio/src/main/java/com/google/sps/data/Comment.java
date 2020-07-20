@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.Entity;
  */
 public class Comment {
 
-  private final long ROOT_COMMENT_ID = 0;
+  private final long DUMMY_COMMENT_ID = 0;
   private final long id;
   private final String text;
   private final long createdAt;
@@ -29,17 +29,18 @@ public class Comment {
   }
 
   public Comment(Entity entity) {
-    this.id = entity.getKey().getId();
-    this.text = (String) entity.getProperty("text");
-    this.email = (String) entity.getProperty("creatorEmail");
-    this.createdAt = (long) entity.getProperty("createdAt");
-    this.parent = (long) entity.getProperty("parent");
-    this.root = (long) entity.getProperty("root");
+    long id = entity.getKey().getId();
+    String text = (String) entity.getProperty("text");
+    String email = (String) entity.getProperty("creatorEmail");
+    long createdAt = (long) entity.getProperty("createdAt");
+    long parent = (long) entity.getProperty("parent");
+    long root = (long) entity.getProperty("root");
+    this(id, text, createdAt, email, parent, root);
   }
 
   //This constructor is associated with the creation of a dummy, root level comment (a supernode for the comment tree)
   public Comment() {
-    this.id = ROOT_COMMENT_ID;
+    this.id = DUMMY_COMMENT_ID;
     this.text = "Welcome to commenting! ";
     this.createdAt = 0;
     this.email = "";
