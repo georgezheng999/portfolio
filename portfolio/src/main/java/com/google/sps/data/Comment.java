@@ -28,6 +28,7 @@ public class Comment {
     this.root = root;
   }
 
+  //This constructor is associated with the creation of a dummy, root level comment (a supernode for the comment tree)
   public Comment(Entity entity) {
     long id = entity.getKey().getId();
     String text = (String) entity.getProperty("text");
@@ -36,16 +37,6 @@ public class Comment {
     long parent = (long) entity.getProperty("parent");
     long root = (long) entity.getProperty("root");
     this(id, text, createdAt, email, parent, root);
-  }
-
-  //This constructor is associated with the creation of a dummy, root level comment (a supernode for the comment tree)
-  public Comment() {
-    this.id = DUMMY_COMMENT_ID;
-    this.text = "Welcome to commenting! ";
-    this.createdAt = 0;
-    this.email = "";
-    this.parent = 0;
-    this.root = 0;
   }
 
   public long getParent() {
