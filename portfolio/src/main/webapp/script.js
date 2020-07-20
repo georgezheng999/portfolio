@@ -14,7 +14,7 @@ async function handleLogin() {
 
 /**
  * Gets comments from the server.
- * response.json() will yield a json map, where each json zmap represents a single comment with the associations found in 
+ * response.json() will yield a json map, where each json map represents a single comment with the associations found in 
  * Comment.java, but additionally, comment[children] maps to a json array of maps recursively representing the children of the comment. 
  */
 async function getComments(limit) {

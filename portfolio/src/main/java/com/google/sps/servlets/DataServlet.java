@@ -57,14 +57,17 @@ public class DataServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  // Retrieves all desired comments in datastore
-  // assumes acyclic invariant of comments: assumes that an ancestor path exists from A to B if and only if A was B was created before A. 
-  // furthermore, assumes that the graph of vertices being comments and edges being a parent-child relation is a directed acyclic graph. 
-  // does not rely on comments having a tree structure (connected graph with exactly n vertices and n-1 edges), but that should be the case!
+  /**
+   * Retrieves all desired comments in datastore
+   * assumes acyclic invariant of comments: assumes that an ancestor path exists from A to B if and only if A was B was created before A. 
+   * furthermore, assumes that the graph of vertices being comments and edges being a parent-child relation is a directed acyclic graph. 
+   * does not rely on comments having a tree structure (connected graph with exactly n vertices and n-1 edges), but that should be the case!
+   */
   private CommentNode getComments(int commentLimit) {
-    Query query = new Query("Comment")
-                    .setFilter(FilterOperator.EQUAL.of("parent",0))
-                      .addSort("createdAt", SortDirection.ASCENDING); 
+    Query query = 
+      new Query("Comment")
+        .setFilter(FilterOperator.EQUAL.of("parent",0))
+          .addSort("createdAt", SortDirection.ASCENDING); 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     final List<Long> rootCommentIds = new ArrayList<>();
@@ -81,9 +84,10 @@ public class DataServlet extends HttpServlet {
     }
     final Set<Long> hashedRootCommentIds = new HashSet<>(rootCommentIds);//hashing for O(1) membership check
     if (!rootCommentIds.isEmpty()) {
-      query = new Query("Comment")
-                .setFilter(new FilterPredicate("root", FilterOperator.IN, hashedRootCommentIds))
-                  .addSort("createdAt", SortDirection.ASCENDING);
+      query = 
+        new Query("Comment")
+          .setFilter(new FilterPredicate("root", FilterOperator.IN, hashedRootCommentIds))
+            .addSort("createdAt", SortDirection.ASCENDING);
       results = datastore.prepare(query);
       for (final Entity entity : results.asIterable()) {
         final long id = entity.getKey().getId();
@@ -97,7 +101,7 @@ public class DataServlet extends HttpServlet {
     return dummyRoot;
   }
 
-  // canonical DFS tree traversal, done in linear time and space 
+  // Canonical DFS tree traversal, done in linear time and space 
   private CommentNode createTree(Comment cmt, Map<Comment, List<Comment>> childrenMapping) {
     final CommentNode root = new CommentNode(cmt);
     for (final Comment childComment : childrenMapping.getOrDefault(cmt, new ArrayList<Comment>())) { 
@@ -106,7 +110,7 @@ public class DataServlet extends HttpServlet {
     return root;
   }
 
-  // precondition: linearComments has exactly every single desired comment once, and there exists a bijection
+  // Precondition: linearComments has exactly every single desired comment once, and there exists a bijection
   // to the key value pairs of idToComment
   // returns a map whose keys are exactly the set of all comments passed in linearComments, and where
   // map[cmt] is a list of comments whose parent is cmt.
@@ -124,7 +128,7 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final UserService userService = UserServiceFactory.getUserService();
     if (!userService.isUserLoggedIn()) {
-      response.sendRedirect("/index.html"); 
+      response.sendRedirect("/index.html");
       return;
     }
     final String email = userService.getCurrentUser().getEmail();
