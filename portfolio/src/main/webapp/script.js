@@ -14,21 +14,38 @@ async function handleLogin() {
 
 /**
  * Gets comments from the server.
+ * response.json() will yield a json map, where each json zmap represents a single comment with the associations found in 
+ * Comment.java, but additionally, comment[children] maps to a json array of maps recursively representing the children of the comment. 
  */
 async function getComments(limit) {
   const historyEl = document.getElementById('comments-history');
   historyEl.innerHTML = ''; //clears the table of previous comments
-  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((comments) => {
-    comments.forEach((comment) => {
-      historyEl.appendChild(createListElement(comment));
-    });
+  fetch('/comments?comment-limit=' + limit).then(response => response.json()).then((root) => {
+    renderTree(root, historyEl);
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(comment) {
+/** Renders the subtree rooted at root at the ul ele*/
+function renderTree(root, ele) {
+  ele.appendChild(createCommentLi(root.comment));
+  for (let child of root.children) {
+    const ul = document.createElement('ul');
+    renderTree(child, ul);
+    ele.appendChild(ul);
+  }
+}
+
+function createCommentLi(comment) {
   const liElement = document.createElement('li');
-  liElement.innerText = comment.text + ' - ' + comment.email;
+  const root = (parseInt(comment.parent) == 0) ? comment.id : comment.root;
+  liElement.innerHTML = comment.text + ' - ' + comment.email + "   ";
+  liElement.innerHTML += `<form action="/comments" method="POST">
+                            <label for="comment">Reply: </label>
+                            <input type="text" name="comment">
+                            <input type="hidden" name="parent" value="${comment.id}"/>
+                            <input type="hidden" name="root" value="${root}"/>
+                            <input type="submit" />
+                          </form>`;
   return liElement;
 }
 
