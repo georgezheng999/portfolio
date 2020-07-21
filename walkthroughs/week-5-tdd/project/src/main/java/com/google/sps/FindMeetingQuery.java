@@ -1,23 +1,63 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package com.google.sps;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
 
 public final class FindMeetingQuery {
+
+  // Returns whether or not any mandatory or optional attendees of this request have a conflict with the event.
+  // Setting considerOpt to true toggles the consideration of optional attendees
+  private boolean eventHasConflict(Event e, MeetingRequest request, boolean considerOpt) {
+    final Collection<String> mandAttendees = request.getAttendees();
+    final Collection<String> optAttendees = request.getOptionalAttendees();
+    for (final String eventAttendee : e.getAttendees()) {
+      if (mandAttendees.contains(eventAttendee)) {
+        return true;
+      }
+      if (considerOpt && optAttendees.contains(eventAttendee)) {
+        return true;
+      } 
+    }
+    return false;
+  }
+
+  // Given a list conflictTimes containing times that are not open and a request,
+  // returns a complementary list of open times that are at least as long as the requested duration
+  public Collection<TimeRange> getOpenTimes(List<TimeRange> conflictTimes, MeetingRequest request) {
+    conflictTimes.add(TimeRange.fromStartDuration(TimeRange.START_OF_DAY, 0));
+    Collections.sort(conflictTimes, TimeRange.ORDER_BY_START);
+    final Collection<TimeRange> queryResult = new ArrayList<>();
+    final int requestDuration = (int) request.getDuration();
+    int maxEndingTimeSoFar = conflictTimes.get(0).end();
+    for (int i = 1; i < conflictTimes.size(); i++) {
+      final int durationDiff = conflictTimes.get(i).start() - maxEndingTimeSoFar; 
+      if (durationDiff >= requestDuration) {
+        queryResult.add(TimeRange.fromStartDuration(maxEndingTimeSoFar, durationDiff));
+      }
+      maxEndingTimeSoFar = Math.max(maxEndingTimeSoFar, conflictTimes.get(i).end());
+    }
+    if (TimeRange.END_OF_DAY - maxEndingTimeSoFar >= requestDuration) {
+      queryResult.add(TimeRange.fromStartEnd(maxEndingTimeSoFar, TimeRange.END_OF_DAY, true));
+    }
+    return queryResult;
+  }
+
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    List<TimeRange> mandConflictTimes = new ArrayList<>();
+    List<TimeRange> mandAndOptConflictTimes = new ArrayList<>();
+    for (final Event e : events) {
+      if (eventHasConflict(e, request, false)) {
+        mandConflictTimes.add(e.getWhen());
+      } 
+      if (eventHasConflict(e, request, true)) {
+        mandAndOptConflictTimes.add(e.getWhen());
+      }
+    }
+    final Collection<TimeRange> mandatoryUserTimes = getOpenTimes(mandConflictTimes, request);
+    final Collection<TimeRange> mandAndOptUserTimes = getOpenTimes(mandAndOptConflictTimes, request);
+    return (mandAndOptUserTimes.isEmpty() && !request.getAttendees().isEmpty()) ? mandatoryUserTimes : mandAndOptUserTimes; 
   }
 }
